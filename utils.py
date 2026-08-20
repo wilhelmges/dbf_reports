@@ -13,18 +13,6 @@ def is_quarter_folder(foldername:str)->bool:
     #print(foldername, rez)
     return rez
 
-def dbf_report_params(filename):
-    sway = filename.split("_")[0][-3]
-    if sway.isdigit():
-        return int(sway)
-    return 0
-
-def is_df_report(df: int|Path)->bool:
-    if isinstance(df, Path):
-        df = dbf_report_params(df.stem)
-    if df == 1 or df == 4 or df == 5:
-        return True
-    return False
 
 def iterate_medok_folder(str_file_path, needed_df_type=None):
     operations = []
