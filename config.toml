@@ -1,0 +1,4 @@
+[main]
+DBF_START_DIR_TEST = "S:/dfscannerons/samples/short_quarters"
+DBF_START_DIR = "S:/МЕДОК"
+DATABASE_PATH = "data/dbfreports.db"
