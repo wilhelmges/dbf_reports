@@ -1,10 +1,13 @@
 from pathlib import Path
-import config
-from dbfread import DBF
-from core import iterate_medok_folder
 import pickle
-from robust_dbfreader.dbf_reader import DbfRawFileReader
 from collections import defaultdict
+
+from dbfread import DBF
+from robust_dbfreader.dbf_reader import DbfRawFileReader
+
+import src.dbf_reports.config
+from src.dbf_reports.utils import iterate_medok_folder
+
 
 def dbf_typed_fields(dbffile):
     table = DBF(f, load=False)

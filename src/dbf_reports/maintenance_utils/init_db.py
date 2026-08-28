@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel
-from database.db import engine
-from database.models import FileHash, Df1, Df4, Df5
+from src.dbf_reports.database.db import engine
+from src.dbf_reports.database.models import FileHash, Df1, Df4, Df5
 
 
 def remove_tables(engine):

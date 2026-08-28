@@ -1,7 +1,7 @@
 import re
 from pathlib import Path
 from typing import Any
-from generic import Generic
+from src.dbf_reports.dbf.generic import Generic
 
 def dbf_report_params(filename:str):
     sway = filename.split("_")[0][-3]

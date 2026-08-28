@@ -2,6 +2,49 @@ import re
 from pathlib import Path
 import hashlib
 
+# Відповідність "схожих" латинських символів до українських
+LATIN_TO_UA = {
+    "A": "А",
+    "B": "В",
+    "C": "С",
+    "E": "Е",
+    "H": "Н",
+    "I": "І",
+    "K": "К",
+    "M": "М",
+    "O": "О",
+    "P": "Р",
+    "T": "Т",
+    "X": "Х",
+    "Y": "У",
+
+    "a": "а",
+    "c": "с",
+    "e": "е",
+    "i": "і",
+    "k": "к",
+    "m": "м",
+    "o": "о",
+    "p": "р",
+    "t": "т",
+    "x": "х",
+    "y": "у",
+}
+# Українські літери + пробіли + базові символи
+ALLOWED_PATTERN = re.compile(r"^[А-Яа-яІіЇїЄєҐґ0-9\s.,!?'\-:;()]+$")
+
+def normalize_ukrainian_text(text: str) -> str:
+    """
+    Замінює латинські літери, схожі на українські,
+    на відповідні українські символи.
+    """
+    if not text:
+        return ""
+    result = []
+    for char in text:
+        result.append(LATIN_TO_UA.get(char, char))
+    normalized = "".join(result)
+    return normalized
 
 quarter_re = re.compile(
     r'^(?P<quarter>[1-4])\s+кв\.?\s+(?P<year>\d{4})$'
@@ -12,7 +55,6 @@ def is_quarter_folder(foldername:str)->bool:
     rez = quarter_re.match(foldername) is not None
     #print(foldername, rez)
     return rez
-
 
 def iterate_medok_folder(str_file_path, needed_df_type=None):
     operations = []

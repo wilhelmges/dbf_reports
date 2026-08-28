@@ -7,6 +7,9 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QPushButton,
 )
+import logging
+from src.dbf_reports.config import setup_logging; setup_logging()
+logger = logging.getLogger(__name__)
 
 def import_tables():
     print("Початок імпорту таблиць")
@@ -29,5 +32,6 @@ if __name__ == '__main__':
     button.clicked.connect(import_tables)
     layout.addWidget(button)
     window.show()
+
 
     sys.exit(app.exec())

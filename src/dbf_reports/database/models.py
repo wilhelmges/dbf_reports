@@ -34,7 +34,7 @@ class Df1(SQLModel, table=True):
 
     NUMIDENT: str | None = Field(
         default=None,
-        max_length=10,
+        max_length=20,#real numident is exatly 10 digits, but other entities may be here
         description="Ідентифікаційний номер"
     )
 
@@ -111,7 +111,6 @@ class Df1(SQLModel, table=True):
             return -self.SUM_NARAH
         return self.SUM_NARAH
 
-    
 class Df4(SQLModel, table=True):
     """
     Дані таблиці dBase III Plus.

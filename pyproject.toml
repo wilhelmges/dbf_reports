@@ -9,6 +9,7 @@ authors = [
 ]
 
 dependencies = [
+    "robust-dbfreader",
     "dbfread>=2.0.7",
     "sqlmodel>=0.0.24",
     "sqlalchemy>=2.0",
