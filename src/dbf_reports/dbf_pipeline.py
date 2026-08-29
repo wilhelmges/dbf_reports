@@ -1,11 +1,12 @@
 import pathlib
 from pathlib import Path
 from sqlmodel import select
-from utils import file_hash
+from utils import file_hash, iterate_medok_folder
 from database.db import SessionFactory
 from database.models import FileHash
 from dbf.core import get_dbf_row_Class, is_df_report
 from dbf.process_rows import process_main, process_adjustments
+
 
 import logging
 from src.dbf_reports.config import setup_logging; setup_logging()

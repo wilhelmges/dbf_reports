@@ -17,14 +17,12 @@ class FieldCantbeConverted(Exception):
     pass
 
 def normalize_rec_for_model(rec, df_model: type[SQLModel]):
-    if df_model is Df1:
+    if df_model is Df1 or df_model is Df5:
         rec['LN'] = normalize_ukrainian_text(rec['LN']).lower()
         rec['NM'] = normalize_ukrainian_text(rec['NM']).lower()
         rec['FTN'] = normalize_ukrainian_text(rec['FTN']).lower()
     elif df_model is Df4:
-        raise NotImplemented
-    elif df_model is Df5:
-        raise NotImplemented
+        return rec
     else:
         raise Exception('Wrong model type')
     return rec

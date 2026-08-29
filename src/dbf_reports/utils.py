@@ -1,6 +1,7 @@
 import re
 from pathlib import Path
 import hashlib
+from dbf.core import dbf_report_params, is_df_report
 
 # Відповідність "схожих" латинських символів до українських
 LATIN_TO_UA = {
