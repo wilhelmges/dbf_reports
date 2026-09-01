@@ -2,11 +2,6 @@ from decimal import Decimal
 from datetime import date
 from sqlmodel import SQLModel, Field
 
-class FileHash(SQLModel, table=True):
-    id: int|None = Field(default=None, primary_key=True)
-    hash: str = Field(default=None, nullable=False)
-    filepath: str =Field(default=None, nullable=False)
-
 class Df1(SQLModel, table=True):
     __tablename__ = "df1s"
 
@@ -61,9 +56,9 @@ class Df1(SQLModel, table=True):
     PAY_MNTH: int | None = Field(default=None)
     PAY_YEAR: int | None = Field(default=None)
 
-    SUM_TOTAL: Decimal | None = Field(default=None, max_digits=16, decimal_places=2)
-    SUM_MAX: Decimal | None = Field(default=None, max_digits=16, decimal_places=2)
-    SUM_INS: Decimal | None = Field(default=None, max_digits=16, decimal_places=2)
+    SUM_TOTAL: float | None = Field(default=None)
+    SUM_MAX: float | None = Field(default=None)
+    SUM_INS: float | None = Field(default=None)
 
     OTK: int | None = Field(default=None)
     EXP: int | None = Field(default=None)
@@ -74,22 +69,18 @@ class Df1(SQLModel, table=True):
     NRM: int | None = Field(default=None)
     KD_VP: int | None = Field(default=None)
 
-    SUM_DIFF: Decimal | None = Field(
+    SUM_DIFF: float | None = Field(
         default=None,
-        max_digits=16,
-        decimal_places=2
     )
 
-    SUM_NARAH: Decimal | None = Field(
+    SUM_NARAH: float | None = Field(
         default=None,
-        max_digits=16,
-        decimal_places=2
     )
 
     NRC: int | None = Field(default=None)
 
-    OZN: str | None = Field(default=None, max_length=1)
-    OTD: str | None = Field(default=None, max_length=1)
+    OZN: int | None = Field(default=None)
+    OTD: int | None = Field(default=None)
 
     SYS_ERROR: str | None = Field(default=None, max_length=2000)
 
@@ -160,35 +151,27 @@ class Df4(SQLModel, table=True):
 
     TIN: str = Field(
         default="",
-        max_length=10,
+        max_length=20,
         description="РНОКПП / ІПН фізичної особи"
     )
 
-    S_NAR: Decimal | None = Field(
-        default=Decimal("0.00"),
-        max_digits=12,
-        decimal_places=2,
+    S_NAR: float | None = Field(
+        default=None,
         description="Сума нарахованого доходу"
     )
 
-    S_DOX: Decimal | None = Field(
-        default=Decimal("0.00"),
-        max_digits=12,
-        decimal_places=2,
+    S_DOX: float | None = Field(
+        default=None,
         description="Сума виплаченого доходу"
     )
 
-    S_TAXN: Decimal | None = Field(
-        default=Decimal("0.00"),
-        max_digits=12,
-        decimal_places=2,
+    S_TAXN: float | None = Field(
+        default=None,
         description="Сума нарахованого податку"
     )
 
-    S_TAXP: Decimal | None = Field(
-        default=Decimal("0.00"),
-        max_digits=12,
-        decimal_places=2,
+    S_TAXP: float | None = Field(
+        default=None,
         description="Сума перерахованого податку"
     )
 
@@ -212,23 +195,18 @@ class Df4(SQLModel, table=True):
         description="Ознака податкової пільги"
     )
 
-    OZNAKA: str = Field(
+    OZNAKA: int = Field(
         default="",
-        max_length=1,
         description="Додаткова службова ознака"
     )
 
-    A051: Decimal | None = Field(
-        default=Decimal("0.00"),
-        max_digits=12,
-        decimal_places=2,
+    A051: float | None = Field(
+        default=None,
         description="Додаткове числове поле A051"
     )
 
-    A05: Decimal | None = Field(
-        default=Decimal("0.00"),
-        max_digits=12,
-        decimal_places=2,
+    A05: float | None = Field(
+        default=None,
         description="Додаткове числове поле A05"
     )
     SYS_ERROR: str | None = Field(default=None, max_length=2000)
@@ -266,7 +244,7 @@ class Df5(SQLModel, table=True):
 
     NUMIDENT: str | None = Field(
         default=None,
-        max_length=10,
+        max_length=20,
         description="Ідентифікаційний номер особи"
     )
 

@@ -1,7 +1,7 @@
 import re
 from pathlib import Path
 import hashlib
-from dbf.core import dbf_report_params, is_df_report
+from src.dbf_reports.dbf.core import dbf_report_params, is_df_report
 
 # Відповідність "схожих" латинських символів до українських
 LATIN_TO_UA = {
@@ -85,7 +85,7 @@ def iterate_medok_folder(str_file_path, needed_df_type=None):
 
     return operations, adjustments, toresearch
 
-def file_hash(file: Path|str) -> str:
+def get_file_hash(file: Path|str) -> str:
     if isinstance(file, str):
         file = Path(file)
     sha256 = hashlib.sha256()
@@ -96,3 +96,5 @@ def file_hash(file: Path|str) -> str:
 
 if __name__=='__main__':
     pass #print(is_quarter_folder("3 кв 2025"))
+    operations, adjustments, t = iterate_medok_folder("s:/МЕДОК")
+    print(len(operations))

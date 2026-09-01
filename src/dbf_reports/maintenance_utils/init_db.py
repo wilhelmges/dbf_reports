@@ -1,7 +1,7 @@
 from sqlmodel import SQLModel
 from src.dbf_reports.database.db import engine
-from src.dbf_reports.database.models import FileHash, Df1, Df4, Df5
-
+from src.dbf_reports.database.dfmodels import  Df1, Df4, Df5
+from src.dbf_reports.database.filehash import FileHash
 
 def remove_tables(engine):
     SQLModel.metadata.drop_all(engine)

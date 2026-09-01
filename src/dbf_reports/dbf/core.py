@@ -3,8 +3,10 @@ from pathlib import Path
 from typing import Any
 from src.dbf_reports.dbf.generic import Generic
 
-def dbf_report_params(filename:str):
-    sway = filename.split("_")[0][-3]
+def dbf_report_params(file):
+    if isinstance(file, Path):
+        file = file.stem
+    sway = file.split("_")[0][-3]
     if sway.isdigit():
         return int(sway)
     return 0
