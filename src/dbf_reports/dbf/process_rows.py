@@ -17,8 +17,10 @@ setup_logging()
 logger = logging.getLogger(__name__)
 import traceback
 
+
 def normalize_adjustment_rec(rec):
     raise Exception('not implemented')
+
 
 def get_model_from_file(file):
     typenum = dbf_report_params(file)
@@ -37,6 +39,22 @@ class FieldCantbeConverted(Exception):
     pass
 
 
+def remove2inkeys(rec):
+    neorec = {}
+    for key, value in rec.items():
+        neokey = key
+        if key.endswith("2"):
+            if (value is not None) and (value != ""):
+                neokey = key[:-1]
+                neorec[neokey] = value
+        else:
+            neorec[key] = value
+    return neorec
+    my_dict = {'NP': 1618.0, 'PERIOD': '9', 'RIK': 2024.0, 'KOD': '', 'TYP': 0.0, 'TIN': '2780704342',
+               'S_NAR': 32119.67, 'S_DOX': 32119.67, 'S_TAXN': 5781.54, 'S_TAXP': 5781.54, 'OZN_DOX': 185.0,
+               'D_PRIYN': '', 'D_ZVILN': '', 'OZN_PILG': '', 'OZNAKA': '', 'A051': '479,84', 'A05': '479,84',
+               'D_ZVILN2': '', 'OZN_PILG2': '', 'OZNAKA2': '1'}
+
 def normalize_rec_for_model(rec, df_model: type[SQLModel]):
     if df_model is Df1 or df_model is Df5:
         rec['LN'] = normalize_ukrainian_text(rec['LN']).lower()
@@ -48,10 +66,7 @@ def normalize_rec_for_model(rec, df_model: type[SQLModel]):
         raise Exception('Wrong model type')
     return rec
 
-
 ignore_fields = ['id', 'SYS_ERROR']
-
-
 def get_row(rec, df_model: type[SQLModel]):
     cleared_data = {}
     rec = normalize_rec_for_model(rec, df_model)
@@ -76,44 +91,51 @@ def get_row(rec, df_model: type[SQLModel]):
         cleared_data[field_name] = value
     return df_model(**cleared_data)
 
-
 def process_main(file) -> bool:
     """returns True if processed successfully"""
     d = DbfRawFileReader(file)
     df_model = get_model_from_file(file)
-    rec = d.read_record(1)
-    dict_fields = set(rec.keys())
-    model_fields = set(df_model.model_fields.keys())
-    if dict_fields - model_fields:
-        return False
-    with SessionFactory() as session:
-        with session.begin():
-            for i in range(1,d.recordnum):
-                rec = d.read_record(i)
-                row = get_row(rec, df_model)
-                #session.add(row)
-
-    return True
-
-
-def process_adjustments(file: Path):
-    d = DbfRawFileReader(file)
-    df_model = get_model_from_file(file)
-    rec = d.read_record(1)
+    rec = remove2inkeys(d.read_record(1))
     dict_fields = set(rec.keys())
     model_fields = set(df_model.model_fields.keys())
     diff = dict_fields - model_fields
     if diff:
         print(f'extrafields in {file}')
         print(diff)
+        return False
+    return True
 
     with SessionFactory() as session:
         with session.begin():
             for i in range(1, d.recordnum):
-                rec = normalize_adjustment_rec(d.read_record(i))
+                rec = remove2inkeys (d.read_record(i))
+                row = get_row(rec, df_model)
+                #session.add(row)
+
+
+
+def process_adjustments(file: Path):
+    d = DbfRawFileReader(file)
+    df_model = get_model_from_file(file)
+    rec = remove2inkeys(d.read_record(1))
+    dict_fields = set(rec.keys())
+    model_fields = set(df_model.model_fields.keys())
+    diff = dict_fields - model_fields
+    if diff:
+        print(f'extrafields in {file}')
+        print(diff)
+    return
+
+    with SessionFactory() as session:
+        with session.begin():
+            for i in range(1, d.recordnum):
+                rec = remove2inkeys(d.read_record(i))
+                rec = normalize_rec_for_model(rec, df_model)
                 print(rec)
-                #row = get_row(rec, df_model)
-#{'NP': 1618.0, 'PERIOD': '9', 'RIK': 2024.0, 'KOD': '', 'TYP': 0.0, 'TIN': '2780704342', 'S_NAR': 32119.67, 'S_DOX': 32119.67, 'S_TAXN': 5781.54, 'S_TAXP': 5781.54, 'OZN_DOX': 185.0, 'D_PRIYN': '', 'D_ZVILN': '', 'OZN_PILG': '', 'OZNAKA': '', 'A051': '479,84', 'A05': '479,84', 'D_ZVILN2': '', 'OZN_PILG2': '', 'OZNAKA2': '1'}
+                # row = get_row(rec, df_model)
+
+
+# {'NP': 1618.0, 'PERIOD': '9', 'RIK': 2024.0, 'KOD': '', 'TYP': 0.0, 'TIN': '2780704342', 'S_NAR': 32119.67, 'S_DOX': 32119.67, 'S_TAXN': 5781.54, 'S_TAXP': 5781.54, 'OZN_DOX': 185.0, 'D_PRIYN': '', 'D_ZVILN': '', 'OZN_PILG': '', 'OZNAKA': '', 'A051': '479,84', 'A05': '479,84', 'D_ZVILN2': '', 'OZN_PILG2': '', 'OZNAKA2': '1'}
 
 
 if __name__ == "__main__":
