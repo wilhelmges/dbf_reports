@@ -104,6 +104,10 @@ class Df1(BaseModel, table=True):
             return -self.SUM_NARAH
         return self.SUM_NARAH
 
+    @classmethod
+    def key_fields(cls):
+        return ("NUMIDENT","PERIOD_M","PERIOD_Y","PAY_YEAR","PAY_MNTH")
+
 class Df4(SQLModel, table=True):
     """
     Дані таблиці dBase III Plus.
@@ -339,9 +343,8 @@ class Df5(SQLModel, table=True):
         description="Ознака пільги або спеціального режиму"
     )
 
-    OZN: str | None = Field(
+    OZN: int | None = Field(
         default=None,
-        max_length=1,
         description="Службова ознака запису"
     )
 

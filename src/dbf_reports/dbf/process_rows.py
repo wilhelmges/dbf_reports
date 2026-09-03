@@ -4,15 +4,15 @@ from robust_dbfreader.dbf_reader import DbfRawFileReader
 from sqlmodel import SQLModel, case
 from sqlalchemy import Float
 
-from src.dbf_reports.database.db import SessionFactory
-from src.dbf_reports.database.dfmodels import Df1, Df4, Df5
-from src.dbf_reports.utils import normalize_ukrainian_text
-from src.dbf_reports.dbf.unbreaker import get_from_broken_value
-from src.dbf_reports.dbf.core import dbf_report_params
+from dbf_reports.database.db import SessionFactory
+from dbf_reports.database.dfmodels import Df1, Df4, Df5
+from dbf_reports.utils import normalize_ukrainian_text
+from dbf_reports.dbf.unbreaker import get_from_broken_value
+from dbf_reports.dbf.core import dbf_report_params
+from dbf_reports.database.patcher import apply_row_from_adjustment, AdjustmentCantBePatchedException
 
 import logging
-from src.dbf_reports.config import setup_logging;
-
+from dbf_reports.config import setup_logging;
 setup_logging()
 logger = logging.getLogger(__name__)
 import traceback
@@ -37,7 +37,6 @@ def get_model_from_file(file):
 
 class FieldCantbeConverted(Exception):
     pass
-
 
 def remove2inkeys(rec):
     neorec = {}
@@ -103,15 +102,14 @@ def process_main(file) -> bool:
         print(f'extrafields in {file}')
         print(diff)
         return False
-    return True
 
     with SessionFactory() as session:
         with session.begin():
             for i in range(1, d.recordnum):
                 rec = remove2inkeys (d.read_record(i))
                 row = get_row(rec, df_model)
-                #session.add(row)
-
+                session.add(row)
+    return True
 
 
 def process_adjustments(file: Path):
@@ -124,15 +122,26 @@ def process_adjustments(file: Path):
     if diff:
         print(f'extrafields in {file}')
         print(diff)
-    return
 
     with SessionFactory() as session:
         with session.begin():
             for i in range(1, d.recordnum):
                 rec = remove2inkeys(d.read_record(i))
                 rec = normalize_rec_for_model(rec, df_model)
-                print(rec)
-                # row = get_row(rec, df_model)
+                row = get_row(rec, df_model)
+                try:
+                    apply_row_from_adjustment(row, session)
+                except Exception as e:
+                    print(f'cant patch row {i} in {file}')
+                    print(row.LN, row.PAY_TP, row.OZN)
+                    session.rollback()
+                    break
+                    return False
+    session.commit()
+    return True
+
+
+
 
 
 # {'NP': 1618.0, 'PERIOD': '9', 'RIK': 2024.0, 'KOD': '', 'TYP': 0.0, 'TIN': '2780704342', 'S_NAR': 32119.67, 'S_DOX': 32119.67, 'S_TAXN': 5781.54, 'S_TAXP': 5781.54, 'OZN_DOX': 185.0, 'D_PRIYN': '', 'D_ZVILN': '', 'OZN_PILG': '', 'OZNAKA': '', 'A051': '479,84', 'A05': '479,84', 'D_ZVILN2': '', 'OZN_PILG2': '', 'OZNAKA2': '1'}
@@ -140,8 +149,9 @@ def process_adjustments(file: Path):
 
 if __name__ == "__main__":
     # _ = get_row(rec, Df1); print(_); exit(0)
-    file = r'C:\progs\dbf reports\data\J0510106_2_23_1.dbf'
-    file = r's:\МЕДОК\3 кв. 2024\Уточнення_ПОМЯЛОВ_9_2024\J0510409_3.dbf'
+    # cant patch row 3 in
+    file = r's:\МЕДОК\2 кв. 2023\Уточнення Царук Віталій Адамович\J0510106_Царук ВА_Редзель СМ_6.dbf'
+    #file = r's:\МЕДОК\3 кв. 2024\Уточнення_ПОМЯЛОВ_9_2024\J0510409_3.dbf'
     process_adjustments(Path(file))
 
     exit(0)

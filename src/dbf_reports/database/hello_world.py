@@ -18,3 +18,4 @@ if __name__ == "__main__":
         r = Repository(session, HelloWorld)
         h = HelloWorld(title="Hello World")
         print(r.find_statement_by_key(h))
+        print(r.find_by_key(h))

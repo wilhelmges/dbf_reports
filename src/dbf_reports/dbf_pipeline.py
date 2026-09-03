@@ -49,15 +49,15 @@ def register_processed_dbf(file: pathlib.Path):
 if __name__ == "__main__":
     filename = r'C:\progs\dbf reports\data\J0510106_2_23_1.dbf'
     operations, adjustments, t = iterate_medok_folder("s:/МЕДОК")
-    print(len(operations))
-    for op in operations:
-        #print(op)
-        dbf_pipeline(op)
+    # print(len(operations))
+    # for op in operations:
+    #     print(op)
+    #     dbf_pipeline(op)
 
-    # print(len(adjustments))
-    # for aj in adjustments:
-    #     print(aj)
-    #     dbf_pipeline(aj, main=False)
+    print(len(adjustments))
+    for aj in adjustments:
+        #print(aj)
+        dbf_pipeline(aj, main=False)
 exit(0)
 # extrafields in s:\МЕДОК\2 кв. 2025\J0510510_Уточн 5 додаток_подати.dbf
 # {'N16', 'N5', 'N10', 'N18', 'N8', 'N4', 'N15', 'N1', 'N7', 'N14', 'N', 'N6', 'N17', 'N9', 'N3', 'N13', 'N11'}

@@ -1,4 +1,6 @@
 from typing import TypeVar, Generic
+
+from sqlalchemy import func
 from sqlmodel import SQLModel, Session, select
 
 from dbf_reports.database.dfmodels import Df1
@@ -21,7 +23,18 @@ class Repository(Generic[T]):
 
     def find_by_key(self, obj: T) -> T | None:
         statement = self.find_statement_by_key(obj)
-        return self.session.exec(statement).scalar_one_or_none()
+        return self.session.exec(statement).one_or_none()
+
+    def count_by_key(self, obj: T) -> int:
+        conditions = []
+        for field_name in self.model.key_fields():
+            value = getattr(obj, field_name)
+            conditions.append(
+                getattr(self.model, field_name) == value
+            )
+        statement = select(func.count()).select_from(self.model).where(*conditions)
+
+        return self.session.exec(statement).one()
 
 class Df1Repository(Repository[Df1]):
     def __init__(self, session: Session):
