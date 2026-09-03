@@ -2,7 +2,9 @@ from decimal import Decimal
 from datetime import date
 from sqlmodel import SQLModel, Field
 
-class Df1(SQLModel, table=True):
+from dbf_reports.database.base_model import BaseModel
+
+class Df1(BaseModel, table=True):
     __tablename__ = "df1s"
 
     id: int | None = Field(default=None, primary_key=True)
