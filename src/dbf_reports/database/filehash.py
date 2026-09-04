@@ -6,3 +6,4 @@ class FileHash(SQLModel, table=True):
     id: int|None = Field(default=None, primary_key=True)
     hash: str
     filepath: str
+    main: bool

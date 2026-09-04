@@ -57,9 +57,15 @@ def is_quarter_folder(foldername:str)->bool:
     #print(foldername, rez)
     return rez
 
+
+def encoded_quarter(strfile)->int:
+    s = (strfile.split('/')[2])
+    sn = (s[-4:]+ s[:1])
+    return (int(sn))
+
 def iterate_medok_folder(str_file_path, needed_df_type=None):
     operations = []
-    adjustments = []
+    ext_adjustments = []
     toresearch= []
 
     file_path = Path(str_file_path)
@@ -79,10 +85,12 @@ def iterate_medok_folder(str_file_path, needed_df_type=None):
                     for file in adjfolder.glob("*.dbf"):
                         dfnum = dbf_report_params(file.stem)
                         if file.stem.lower().startswith("j") and is_df_report(dfnum) and (not needed_df_type or dfnum == needed_df_type):
-                            adjustments.append(file) #pass
+                            ext_adjustments.append (file.as_posix()) #pass
                         else:
                             toresearch.append(file)
 
+    adjustments = sorted(ext_adjustments, key=encoded_quarter)
+    #adjustments = [Path(s) for s in adjustments]
     return operations, adjustments, toresearch
 
 def get_file_hash(file: Path|str) -> str:
@@ -94,7 +102,10 @@ def get_file_hash(file: Path|str) -> str:
             sha256.update(chunk)
     return sha256.hexdigest()
 
+
 if __name__=='__main__':
     pass #print(is_quarter_folder("3 кв 2025"))
     operations, adjustments, t = iterate_medok_folder("s:/МЕДОК")
-    print(len(operations))
+    print(adjustments)
+
+    #file = r's:\МЕДОК\2 кв. 2023\Уточнення Царук Віталій Адамович\J0510106_Царук ВА_Редзель СМ_6.dbf'

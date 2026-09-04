@@ -13,6 +13,8 @@ db_path = PROJECT_DIR/config["main"]["DATABASE_PATH"]
 
 def setup_logging():
     logger = logging.getLogger()
+    if logger.handlers:
+        return
     logger.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter(

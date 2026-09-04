@@ -108,7 +108,7 @@ class Df1(BaseModel, table=True):
     def key_fields(cls):
         return ("NUMIDENT","PERIOD_M","PERIOD_Y","PAY_YEAR","PAY_MNTH")
 
-class Df4(SQLModel, table=True):
+class Df4(BaseModel, table=True):
     """
     Дані таблиці dBase III Plus.
 
@@ -216,8 +216,12 @@ class Df4(SQLModel, table=True):
         description="Додаткове числове поле A05"
     )
     SYS_ERROR: str | None = Field(default=None, max_length=2000)
+
+    @classmethod
+    def key_fields(cls):
+        return ("TIK","RIK","PERIOD","LN",)
     
-class Df5(SQLModel, table=True):
+class Df5(BaseModel, table=True):
     """
     Дані про трудові відносини, професію, посаду
     та періоди роботи фізичної особи.
@@ -349,3 +353,7 @@ class Df5(SQLModel, table=True):
     )
 
     SYS_ERROR: str | None = Field(default=None, max_length=2000)
+
+    @classmethod
+    def key_fields(cls):
+        return ("NUMIDENT","PERIOD_M","PERIOD_Y","LN",)

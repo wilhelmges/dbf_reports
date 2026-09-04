@@ -9,7 +9,7 @@ from dbf_reports.database.dfmodels import Df1, Df4, Df5
 from dbf_reports.utils import normalize_ukrainian_text
 from dbf_reports.dbf.unbreaker import get_from_broken_value
 from dbf_reports.dbf.core import dbf_report_params
-from dbf_reports.database.patcher import apply_row_from_adjustment, AdjustmentCantBePatchedException
+from dbf_reports.database.adjustment_service import apply_row_from_adjustment, CantApplyRowException
 
 import logging
 from dbf_reports.config import setup_logging;
@@ -120,8 +120,10 @@ def process_adjustments(file: Path):
     model_fields = set(df_model.model_fields.keys())
     diff = dict_fields - model_fields
     if diff:
-        print(f'extrafields in {file}')
+        print(f'extrafields in {file} {diff}')
         print(diff)
+        logger.warning(f'extrafields {diff} in {file} ')
+        return False
 
     with SessionFactory() as session:
         with session.begin():
@@ -131,12 +133,20 @@ def process_adjustments(file: Path):
                 row = get_row(rec, df_model)
                 try:
                     apply_row_from_adjustment(row, session)
-                except Exception as e:
+                except CantApplyRowException as e:
                     print(f'cant patch row {i} in {file}')
                     print(row.LN, row.PAY_TP, row.OZN)
+                    logger.warning(f'cant patch row {i} in {file}')
+                    logger.warning(str(e))
                     session.rollback()
-                    break
                     return False
+
+                except Exception as e:
+                    logger.warning(f'unknown in row {i}  {file}')
+                    session.rollback()
+                    return False
+
+
     session.commit()
     return True
 
