@@ -134,14 +134,13 @@ def process_adjustments(file: Path):
                 try:
                     apply_row_from_adjustment(row, session)
                 except CantApplyRowException as e:
-                    print(f'cant patch row {i} in {file}')
-                    print(row.LN, row.PAY_TP, row.OZN)
                     logger.warning(f'cant patch row {i} in {file}')
                     logger.warning(str(e))
                     session.rollback()
                     return False
 
                 except Exception as e:
+                    logger.warning(str(e))
                     logger.warning(f'unknown in row {i}  {file}')
                     session.rollback()
                     return False
@@ -149,10 +148,6 @@ def process_adjustments(file: Path):
 
     session.commit()
     return True
-
-
-
-
 
 # {'NP': 1618.0, 'PERIOD': '9', 'RIK': 2024.0, 'KOD': '', 'TYP': 0.0, 'TIN': '2780704342', 'S_NAR': 32119.67, 'S_DOX': 32119.67, 'S_TAXN': 5781.54, 'S_TAXP': 5781.54, 'OZN_DOX': 185.0, 'D_PRIYN': '', 'D_ZVILN': '', 'OZN_PILG': '', 'OZNAKA': '', 'A051': '479,84', 'A05': '479,84', 'D_ZVILN2': '', 'OZN_PILG2': '', 'OZNAKA2': '1'}
 

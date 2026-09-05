@@ -41,13 +41,13 @@ def apply_row_from_adjustment(row, session: Session):
     elif isinstance(row, Df4):
         r = Repository(session, Df4)
         statement = r.find_statement_by_key(row)
-        if row.OZN == 1:
+        if row.OZNAKA == 1:
             df = session.exec(statement).one()
             session.delete(df)
-        elif row.OZN == 0:
+        elif row.OZNAKA == 0:
             session.add(row)
         else:
-            raise CantApplyRowException(f'df4 indefinite operation for {row.LN}, {row.OZN}')
+            raise CantApplyRowException(f'df4 indefinite operation for {row.TIN}, {row.OZNAKA}')
 
 
     elif isinstance(row, Df5):

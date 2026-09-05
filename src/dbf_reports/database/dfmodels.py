@@ -219,7 +219,7 @@ class Df4(BaseModel, table=True):
 
     @classmethod
     def key_fields(cls):
-        return ("TIK","RIK","PERIOD","LN",)
+        return ("TIN","RIK","PERIOD",)
     
 class Df5(BaseModel, table=True):
     """

@@ -26,10 +26,12 @@ def dbf_pipeline(str_file_path, main=True):
         rez = process_main(file)
     else:
         rez = process_adjustments(file)
+
     if rez:
         register_processed_dbf(file, main)
         return True
-    return False
+    else:
+        return False
 
 def is_dbf_already_imported(file: pathlib.Path):
     _hash = get_file_hash(file)
